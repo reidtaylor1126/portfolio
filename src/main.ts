@@ -8,7 +8,7 @@ import CustomOrbitCam from './cameraSystem';
 const mousePosition = new THREE.Vector2();
 const scene = new THREE.Scene();
 const loader = new GLTFLoader();
-scene.background = new THREE.Color(0xefffef);
+scene.background = new THREE.Color(0xbbbbb7);
 
 document.addEventListener('mousemove', onMouseMove, false);
 addEventListener('mousedown', onClick, false)
