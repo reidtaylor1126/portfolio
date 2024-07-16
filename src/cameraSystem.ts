@@ -5,7 +5,9 @@ class CustomOrbitCam {
     base: THREE.Object3D;
     elevator: THREE.Object3D;
     lerpSpeed: number = 0.25
+    snapThreshold: number = 0.15;
     targets: Array<THREE.Vector2> = [];
+    targetIndex: number = -1;
 
     constructor(scene: THREE.Scene) {
         this.base = new THREE.Object3D();
@@ -14,7 +16,7 @@ class CustomOrbitCam {
         scene.add(this.elevator);
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
         
-        this.camera.position.z = 10;
+        this.camera.position.z = 7.5;
 
         this.elevator.parent = this.base;
         this.base.children.push(this.elevator);
@@ -22,26 +24,32 @@ class CustomOrbitCam {
         this.elevator.children.push(this.camera);
     }
 
-    moveCamera(mousePosition: THREE.Vector2): void {
+    moveCamera(position: THREE.Vector2): void {
     
         var nearTarget = false;
         var goal = new THREE.Vector2();
     
-        this.targets.map(target => {
-            if (target.distanceTo(mousePosition) < 0.1) {
+        this.targets.map((target, index) => {
+            if (target.distanceTo(position) < this.snapThreshold) {
                 goal.x = -target.y;
                 goal.y = -target.x*1.5;
                 nearTarget = true;
+                this.targetIndex = index;
             }
         })
     
         if (!nearTarget) {
-            goal.y = -mousePosition.x*1.5;
-            goal.x = -mousePosition.y;
+            goal.y = -position.x*1.5;
+            goal.x = -position.y;
         }
         
         this.elevator.rotation.x = this.lerpSpeed * goal.x + (1-this.lerpSpeed) * this.elevator.rotation.x;
         this.base.rotation.y = this.lerpSpeed * goal.y + (1-this.lerpSpeed) * this.base.rotation.y;
+    }
+
+    nextTarget(): THREE.Vector2 {
+        this.targetIndex = (this.targetIndex + 1) % this.targets.length;
+        return this.targets[this.targetIndex];
     }
 }
 
