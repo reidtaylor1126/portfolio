@@ -22,12 +22,28 @@ document.body.appendChild(renderer.domElement);
 const camSys = new CustomOrbitCam(scene);
 camSys.targets = [
     new THREE.Vector2(-0.5791666667, -0.2620967742),
-    new THREE.Vector2(0.4072916667, -0.435483871),
-    new THREE.Vector2(0.053125, 0.524193548)
+    new THREE.Vector2(0.053125, 0.524193548),
+    new THREE.Vector2(0.4072916667, -0.435483871)   
 ]
 const sky = new THREE.AmbientLight(0xafcfff, 1);
 const light = new THREE.DirectionalLight(0xffefdf, 3);
 light.position.set(5, 10, 3);
+
+const targetMarkContainer = document.getElementById('target-container')
+camSys.targets.map((target) => {
+    const width = camSys.snapThreshold*0.5
+    const x = (window.innerWidth * (target.x+1) / 2) - width/2;
+    const y = (window.innerHeight * (target.y + 1) / 2) - width/2;
+    const targetMark = document.createElement("div");
+    targetMark.className = 'nav-target'
+    targetMark.setAttribute('style', `left: ${x}px; top: ${y}px; width: ${width}px; height: ${width}px`)
+    // targetMark.style.left = `${x}`;
+    // targetMark.style.top = `${y}`;
+    // targetMark.style.width = `${width}`;
+    // targetMark.style.height = `${width}`;
+
+    targetMarkContainer?.appendChild(targetMark);
+})
 
 scene.add(sky);
 scene.add(light);
@@ -68,7 +84,5 @@ function render() {
 
     camSys.moveCamera(viewPosition);
 }
-
-
 
 renderer.setAnimationLoop(render);

@@ -5,7 +5,7 @@ class CustomOrbitCam {
     base: THREE.Object3D;
     elevator: THREE.Object3D;
     lerpSpeed: number = 0.25
-    snapThreshold: number = 0.15;
+    snapThreshold: number = 100;
     targets: Array<THREE.Vector2> = [];
     targetIndex: number = -1;
 
@@ -30,7 +30,9 @@ class CustomOrbitCam {
         var goal = new THREE.Vector2();
     
         this.targets.map((target, index) => {
-            if (target.distanceTo(position) < this.snapThreshold) {
+            const targetNormalized = new THREE.Vector2(target.x * window.innerWidth, target.y * window.innerHeight)
+            const positionNormalized = new THREE.Vector2(position.x * window.innerWidth , position.y * window.innerHeight)
+            if (targetNormalized.distanceTo(positionNormalized) < this.snapThreshold) {
                 goal.x = -target.y;
                 goal.y = -target.x*1.5;
                 nearTarget = true;
